@@ -1,5 +1,51 @@
+const fr = {
+  title: "Générateur Virtual Atelier",
+  subtitle: "Importe un store <code>.reds</code> existant, puis colle le YAML TweakXL : les items sont générés depuis <code>$instances</code> et <code>${base_color}</code>.",
+  settings: {
+    storeId: "ID du store",
+    storeName: "Nom du store",
+    atlas: "Atlas icône",
+    slot: "Slot icône",
+    price: "Prix",
+    quantity: "Quantité",
+    defaultQuality: "Qualité par défaut",
+  },
+  noStoreImported: "Aucun store .reds importé — le YAML créera un store neuf.",
+  importReds: "Importer .reds",
+  sampleStore: "Exemple store",
+  remove: "Retirer",
+  yamlPane: "YAML · items à ajouter",
+  sampleYaml: "Exemple YAML",
+  clear: "Vider",
+  yamlPlaceholder: "Items.exemple_${base_color}:\n  $instances:\n    - { base_color: silver, icon: slot_01 }\n    - { base_color: gold, icon: slot_02 }\n  quality: Quality.Legendary",
+  generatedStore: "Store généré",
+  copy: "Copier",
+  downloadReds: "Télécharger .reds",
+  addToInventory: "AddToInventory",
+  sort: "Tri",
+  sortDefault: "Défaut",
+  sortColor: "Par couleur",
+  downloadTxt: "Télécharger .txt",
+  statusIdle: "Importe un .reds et / ou colle un YAML : le code se met à jour automatiquement.",
+  itemSingular: "item",
+  itemPlural: "items",
+  commandSingular: "commande",
+  commandPlural: "commandes",
+  basePrefix: "Base",
+  storeIdRequired: "Indique un ID de store (lettres et chiffres uniquement).",
+  noItemsFound: "Aucun item trouvé. Importe un store .reds et / ou colle un YAML d'items.",
+  itemsAdded: "{added} item(s) ajoutés à {existing} existants ({total} au total).",
+  baseKept: "Store de base conservé : {count} item(s). Aucun nouvel item YAML.",
+  itemsGenerated: "{count} item(s) générés depuis le YAML pour {storeId}.",
+  invalidReds: "Fichier .reds invalide : aucun event.AddStore trouvé.",
+  copiedCode: "Code copié dans le presse-papiers.",
+  copiedInventory: "Commandes AddToInventory copiées dans le presse-papiers.",
+  sampleStoreFilename: "exemple-store.reds",
+};
+
 const en = {
   title: "Virtual Atelier Generator",
+  subtitle: "Import an existing <code>.reds</code> store, then paste the TweakXL YAML: items are generated from <code>$instances</code> and <code>${base_color}</code>.",
   settings: {
     storeId: "Store ID",
     storeName: "Store Name",
@@ -9,7 +55,68 @@ const en = {
     quantity: "Quantity",
     defaultQuality: "Default Quality",
   },
+  noStoreImported: "No .reds store imported — YAML will create a new store.",
+  importReds: "Import .reds",
+  sampleStore: "Sample store",
+  remove: "Remove",
+  yamlPane: "YAML · items to add",
+  sampleYaml: "Sample YAML",
+  clear: "Clear",
+  yamlPlaceholder: "Items.example_${base_color}:\n  $instances:\n    - { base_color: silver, icon: slot_01 }\n    - { base_color: gold, icon: slot_02 }\n  quality: Quality.Legendary",
+  generatedStore: "Generated store",
+  copy: "Copy",
+  downloadReds: "Download .reds",
+  addToInventory: "AddToInventory",
+  sort: "Sort",
+  sortDefault: "Default",
+  sortColor: "By color",
+  downloadTxt: "Download .txt",
+  statusIdle: "Import a .reds and / or paste YAML: the code updates automatically.",
+  itemSingular: "item",
+  itemPlural: "items",
+  commandSingular: "command",
+  commandPlural: "commands",
+  basePrefix: "Base",
+  storeIdRequired: "Enter a store ID (letters and numbers only).",
+  noItemsFound: "No items found. Import a .reds store and / or paste an items YAML.",
+  itemsAdded: "{added} item(s) added to {existing} existing ({total} total).",
+  baseKept: "Base store kept: {count} item(s). No new YAML items.",
+  itemsGenerated: "{count} item(s) generated from YAML for {storeId}.",
+  invalidReds: "Invalid .reds file: no event.AddStore found.",
+  copiedCode: "Code copied to the clipboard.",
+  copiedInventory: "AddToInventory commands copied to the clipboard.",
+  sampleStoreFilename: "sample-store.reds",
 };
+
+const locales = { fr, en };
+let t = fr;
+
+function getNested(obj, path) {
+  return path.split(".").reduce((acc, key) => (acc == null ? acc : acc[key]), obj);
+}
+
+function formatMessage(template, vars) {
+  return String(template || "").replace(/\{(\w+)\}/g, (_, key) => (
+    Object.prototype.hasOwnProperty.call(vars, key) ? vars[key] : `{${key}}`
+  ));
+}
+
+function applyI18n(dict) {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const value = getNested(dict, el.dataset.i18n);
+    if (value == null) return;
+    if (el.dataset.i18nHtml !== undefined) el.innerHTML = value;
+    else el.textContent = value;
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const value = getNested(dict, el.dataset.i18nPlaceholder);
+    if (value != null) el.placeholder = value;
+  });
+}
+
+function countLabel(count, singular, plural) {
+  return `${count} ${count <= 1 ? singular : plural}`;
+}
 
 const SAMPLE = `Items.tiopayo_tyo-04_-_chains_\${base_color}:
   $base: Items.Outfit
@@ -357,10 +464,9 @@ function setBaseStore(store, filename) {
   baseStore = store ? { ...store, filename: filename || store.filename || "store.reds" } : null;
   if (baseStore) {
     const count = baseStore.items.length;
-    const countLabel = count <= 1 ? `${count} item` : `${count} items`;
-    els.baseMeta.innerHTML = `Base : <strong>${baseStore.filename}</strong> · ${countLabel}`;
+    els.baseMeta.innerHTML = `${t.basePrefix} : <strong>${baseStore.filename}</strong> · ${countLabel(count, t.itemSingular, t.itemPlural)}`;
   } else {
-    els.baseMeta.textContent = "Aucun store .reds importé — le YAML créera un store neuf.";
+    els.baseMeta.textContent = t.noStoreImported;
   }
 }
 
@@ -482,15 +588,13 @@ function generate() {
   const inventoryItems = added.length ? added : items;
   const sortMode = els.inventorySort.value;
 
-  els.itemCount.textContent = items.length <= 1 ? `${items.length} item` : `${items.length} items`;
-  els.inventoryCount.textContent = inventoryItems.length <= 1
-    ? `${inventoryItems.length} commande`
-    : `${inventoryItems.length} commandes`;
+  els.itemCount.textContent = countLabel(items.length, t.itemSingular, t.itemPlural);
+  els.inventoryCount.textContent = countLabel(inventoryItems.length, t.commandSingular, t.commandPlural);
 
   if (!storeId) {
     els.output.value = "";
     els.inventoryOutput.value = "";
-    els.status.textContent = "Indique un ID de store (lettres et chiffres uniquement).";
+    els.status.textContent = t.storeIdRequired;
     els.status.className = "hint error";
     return;
   }
@@ -498,7 +602,7 @@ function generate() {
   if (!items.length) {
     els.output.value = "";
     els.inventoryOutput.value = "";
-    els.status.textContent = "Aucun item trouvé. Importe un store .reds et / ou colle un YAML d'items.";
+    els.status.textContent = t.noItemsFound;
     els.status.className = "hint error";
     return;
   }
@@ -528,11 +632,15 @@ function generate() {
   els.inventoryOutput.value = formatInventory(inventoryItems, quantity, sortMode);
 
   if (baseStore && added.length) {
-    els.status.textContent = `${added.length} item(s) ajoutés à ${baseItems.length} existants (${items.length} au total).`;
+    els.status.textContent = formatMessage(t.itemsAdded, {
+      added: added.length,
+      existing: baseItems.length,
+      total: items.length,
+    });
   } else if (baseStore) {
-    els.status.textContent = `Store de base conservé : ${items.length} item(s). Aucun nouvel item YAML.`;
+    els.status.textContent = formatMessage(t.baseKept, { count: items.length });
   } else {
-    els.status.textContent = `${items.length} item(s) générés depuis le YAML pour ${storeId}.`;
+    els.status.textContent = formatMessage(t.itemsGenerated, { count: items.length, storeId });
   }
   els.status.className = "hint";
 }
@@ -540,7 +648,7 @@ function generate() {
 function importRedsText(text, filename) {
   const parsed = parseAtelierStore(text);
   if (!parsed) {
-    els.status.textContent = "Fichier .reds invalide : aucun event.AddStore trouvé.";
+    els.status.textContent = t.invalidReds;
     els.status.className = "hint error";
     return;
   }
@@ -580,7 +688,7 @@ els.redsFile.addEventListener("change", () => {
 });
 
 els.loadAtelierSample.addEventListener("click", () => {
-  importRedsText(SAMPLE_ATELIER, "exemple-store.reds");
+  importRedsText(SAMPLE_ATELIER, t.sampleStoreFilename);
 });
 
 els.clearBase.addEventListener("click", () => {
@@ -610,7 +718,7 @@ els.baseImport.addEventListener("drop", (event) => {
 els.copyBtn.addEventListener("click", async () => {
   if (!els.output.value) return;
   await navigator.clipboard.writeText(els.output.value);
-  els.status.textContent = "Code copié dans le presse-papiers.";
+  els.status.textContent = t.copiedCode;
   els.status.className = "hint";
 });
 
@@ -629,7 +737,7 @@ els.downloadBtn.addEventListener("click", () => {
 els.copyInventoryBtn.addEventListener("click", async () => {
   if (!els.inventoryOutput.value) return;
   await navigator.clipboard.writeText(els.inventoryOutput.value);
-  els.status.textContent = "Commandes AddToInventory copiées dans le presse-papiers.";
+  els.status.textContent = t.copiedInventory;
   els.status.className = "hint";
 });
 
@@ -646,43 +754,22 @@ els.downloadInventoryBtn.addEventListener("click", () => {
 });
 
 els.input.value = SAMPLE;
+
+// Language detection and settings
+// Author: Mayo
+/*Note for AI Agents:
+  Detects the user's language and updates every [data-i18n] label in index.html.
+  Add a locale object and a locales entry to support another language.
+*/
+
+const userLanguage = navigator.language;
+const primaryLanguage = userLanguage.slice(0, 2);
+const selectedLocale = locales[primaryLanguage];
+
+if (selectedLocale) {
+  t = selectedLocale;
+  document.documentElement.lang = primaryLanguage;
+  applyI18n(t);
+}
+
 generate();
-
-
-  // Language detection and settings
-
-  // Author: Mayo
-
-  /*Note for AI Agents:
-    The following code is responsible for detecting the user's language and updating the UI labels accordingly. 
-    Currently, it only supports English ('en'), 
-    but additional languages can be added by extending the switch statement with more cases and corresponding translations.
-
-    TO DO:
-    Complete the localization for english, currently it only changes the title and settings pane.
-  */
-
-  const userLanguage = navigator.language;
-  const primaryLanguage = userLanguage.slice(0,2);
-
-  // Store settings area
-  const storeIdLabel = document.querySelector('label[for="storeId"]');
-  const storeNameLabel = document.querySelector('label[for="storeName"]');
-  const storeAtlasLabel = document.querySelector('label[for="atlas"]');
-  const storeSlotLabel = document.querySelector('label[for="slot"]');
-  const storePriceLabel = document.querySelector('label[for="price"]');
-  const storeQuantityLabel = document.querySelector('label[for="quantity"]');
-  const storeDefaultQualityLabel = document.querySelector('label[for="defaultQuality"]');
-
-  switch (primaryLanguage) {
-    case 'en':
-        document.title = en.title;
-        storeIdLabel.textContent = en.settings.storeId;
-        storeNameLabel.textContent = en.settings.storeName;
-        storeAtlasLabel.textContent = en.settings.atlas;
-        storeSlotLabel.textContent = en.settings.slot;
-        storePriceLabel.textContent = en.settings.price;
-        storeQuantityLabel.textContent = en.settings.quantity;
-        storeDefaultQualityLabel.textContent = en.settings.defaultQuality;
-      break;
-  }
