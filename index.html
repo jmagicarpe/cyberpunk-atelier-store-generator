@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Générateur Virtual Atelier</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Générateur Virtual Atelier</h1>
+    <p>Importe un store <code>.reds</code> existant, puis colle le YAML TweakXL : les items sont générés depuis <code>$instances</code> et <code>${base_color}</code>.</p>
+  </header>
+
+  <main>
+    <section class="settings">
+      <div class="field">
+        <label for="storeId">ID du store</label>
+        <input id="storeId" value="TIOPAYOTYOSTORE" />
+      </div>
+      <div class="field">
+        <label for="storeName">Nom du store</label>
+        <input id="storeName" value="TYO - Store" />
+      </div>
+      <div class="field span-2">
+        <label for="atlas">Atlas icône</label>
+        <input id="atlas" value="tiopayo/tyo-store/tyo-store_icons.inkatlas" />
+      </div>
+      <div class="field">
+        <label for="slot">Slot icône</label>
+        <input id="slot" value="slot_01" />
+      </div>
+      <div class="field">
+        <label for="price">Prix</label>
+        <input id="price" type="number" min="0" value="0" />
+      </div>
+      <div class="field">
+        <label for="quantity">Quantité</label>
+        <input id="quantity" type="number" min="1" value="1" />
+      </div>
+      <div class="field">
+        <label for="defaultQuality">Qualité par défaut</label>
+        <input id="defaultQuality" value="Legendary" />
+      </div>
+    </section>
+
+    <section class="base-import" id="baseImport">
+      <div class="file-meta" id="baseMeta">Aucun store .reds importé — le YAML créera un store neuf.</div>
+      <div class="actions">
+        <button id="importBtn" type="button">Importer .reds</button>
+        <button class="secondary" id="loadAtelierSample" type="button">Exemple store</button>
+        <button class="secondary" id="clearBase" type="button">Retirer</button>
+      </div>
+      <input id="redsFile" type="file" accept=".reds,.red,.txt" />
+    </section>
+
+    <section class="workspace">
+      <div class="pane">
+        <div class="pane-head">
+          <span>YAML · items à ajouter</span>
+          <div class="actions">
+            <button class="secondary" id="loadSample" type="button">Exemple YAML</button>
+            <button class="secondary" id="clearInput" type="button">Vider</button>
+          </div>
+        </div>
+        <textarea id="input" spellcheck="false" placeholder="Items.exemple_${base_color}:&#10;  $instances:&#10;    - { base_color: silver, icon: slot_01 }&#10;    - { base_color: gold, icon: slot_02 }&#10;  quality: Quality.Legendary"></textarea>
+      </div>
+
+      <div class="pane">
+        <div class="pane-head">
+          <span>Store généré · <strong id="itemCount">0 item</strong></span>
+          <div class="actions">
+            <button id="copyBtn" type="button">Copier</button>
+            <button class="secondary" id="downloadBtn" type="button">Télécharger .reds</button>
+          </div>
+        </div>
+        <textarea id="output" spellcheck="false" readonly></textarea>
+      </div>
+
+      <div class="pane inventory">
+        <div class="pane-head">
+          <span>AddToInventory · <strong id="inventoryCount">0 commande</strong></span>
+          <div class="actions">
+            <div class="field-inline">
+              <label for="inventorySort">Tri</label>
+              <select id="inventorySort">
+                <option value="default">Défaut</option>
+                <option value="color">Par couleur</option>
+              </select>
+            </div>
+            <button id="copyInventoryBtn" type="button">Copier</button>
+            <button class="secondary" id="downloadInventoryBtn" type="button">Télécharger .txt</button>
+          </div>
+        </div>
+        <textarea id="inventoryOutput" spellcheck="false" readonly></textarea>
+      </div>
+    </section>
+
+    <p class="hint" id="status">Importe un .reds et / ou colle un YAML : le code se met à jour automatiquement.</p>
+  </main>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>

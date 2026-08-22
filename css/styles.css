@@ -1,0 +1,220 @@
+:root {
+  --bg: #0b0b0d;
+  --panel: #141418;
+  --panel-2: #1c1c22;
+  --border: #2e2e38;
+  --text: #ecece8;
+  --muted: #9a9aa8;
+  --yellow: #fcee0a;
+  --cyan: #29f1ff;
+  --danger: #ff3b6b;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  background-image:
+    linear-gradient(180deg, rgba(252, 238, 10, 0.04), transparent 28%),
+    repeating-linear-gradient(90deg, transparent, transparent 47px, rgba(255,255,255,0.015) 48px);
+}
+
+header {
+  padding: 28px 32px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+main {
+  padding: 20px 32px 40px;
+  display: grid;
+  gap: 18px;
+}
+
+.settings {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field.span-2 { grid-column: span 2; }
+
+label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+input, textarea, button, select {
+  font: inherit;
+  color: var(--text);
+}
+
+input, select {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 9px 10px;
+  outline: none;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--yellow);
+}
+
+.field-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.field-inline select {
+  padding: 6px 8px;
+}
+
+.base-import {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--panel);
+  border: 1px dashed var(--border);
+  padding: 14px 16px;
+}
+
+.base-import.dragover {
+  border-color: var(--yellow);
+  background: #1a1a12;
+}
+
+.base-import .file-meta {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.base-import .file-meta strong {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  min-height: 62vh;
+}
+
+.pane.inventory { grid-column: 1 / -1; }
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  min-height: 0;
+}
+
+.pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pane-head strong {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+button {
+  background: var(--yellow);
+  color: #111;
+  border: 0;
+  padding: 8px 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button:hover { filter: brightness(1.08); }
+
+textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 320px;
+  resize: vertical;
+  background: #101014;
+  border: 0;
+  padding: 14px;
+  line-height: 1.45;
+  font-family: Consolas, "Cascadia Mono", monospace;
+  font-size: 13px;
+  white-space: pre;
+}
+
+.pane.inventory textarea { min-height: 220px; }
+
+#output { color: #d8ffe3; }
+#inventoryOutput { color: #b8f4ff; }
+#redsFile { display: none; }
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.error { color: var(--danger); }
+
+@media (max-width: 1100px) {
+  .settings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .field.span-2 { grid-column: span 2; }
+  .workspace { grid-template-columns: 1fr; }
+  .pane.inventory { grid-column: auto; }
+}
